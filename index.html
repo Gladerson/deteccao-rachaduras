@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detecção de Rachaduras</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #4b5563;
+      --success: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --dark: #1f2937;
+      --light: #f9fafb;
+      --border-radius: 10px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f4f6;
+      color: var(--dark);
+      line-height: 1.6;
+      padding-bottom: 40px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 25px 0;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    h1 i {
+      margin-right: 10px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-decoration: none;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn i {
+      margin-right: 8px;
+    }
+    
+    #viewer {
+      margin: 20px auto;
+      max-width: 900px;
+      display: none;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    
+    #imageBox, #videoBox {
+      margin: 0 auto;
+      max-width: 100%;
+      display: none;
+    }
+    
+    #imageDisplay, #videoStream {
+      max-width: 100%;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: block;
+      margin: 0 auto;
+    }
+    
+    #navButtons {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+      gap: 10px;
+    }
+    
+    #navButtons button {
+      width: 50px;
+      height: 50px;
+      font-size: 1.3rem;
+      padding: 0;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #navButtons button:hover {
+      background-color: var(--primary-dark);
+      transform: scale(1.05);
+    }
+    
+    #endButton {
+      display: none;
+      margin: 20px auto 0;
+    }
+    
+    .alert-container {
+      margin-top: 30px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    #alertArea {
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    #alertArea p {
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      background-color: #fee2e2;
+      border-left: 5px solid var(--danger);
+      display: flex;
+      align-items: center;
+    }
+    
+    #alertArea p::before {
+      content: "⚠️";
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .alert-title {
+      font-size: 1.4rem;
+      color: var(--dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .alert-title i {
+      margin-right: 10px;
+      color: var(--danger);
+    }
+    
+    .img-counter {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 1.1rem;
+      color: var(--secondary);
+    }
+    
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><i class="fas fa-camera"></i> Detecção de Rachaduras</h1>
+      <p class="subtitle">Sistema de reconhecimento com YOLOv11</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <label class="btn">
+        <i class="fas fa-upload"></i> Upload de Imagens
+        <input type="file" id="imgInput" multiple accept="image/*" style="display:none" />
+      </label>
+      <button class="btn" onclick="startCamera()">
+        <i class="fas fa-video"></i> Abrir Câmera
+      </button>
+    </div>
+
+    <div id="viewer">
+      <div id="imageBox">
+        <div class="img-counter">Imagem <span id="currentImageNumber">1</span> de <span id="totalImages">1</span></div>
+        <img id="imageDisplay" src="" alt="Imagem para análise">
+        <div id="navButtons">
+          <button onclick="prevImage()"><i class="fas fa-chevron-left"></i></button>
+          <button onclick="nextImage()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div id="videoBox">
+        <img id="videoStream" src="" alt="Stream de vídeo">
+      </div>
+      <button class="btn" id="endButton" onclick="endView()">
+        <i class="fas fa-times-circle"></i> Encerrar Visualização
+      </button>
+    </div>
+
+    <div class="alert-container">
+      <div class="alert-title"><i class="fas fa-exclamation-triangle"></i> Alertas de Detecção</div>
+      <div id="alertArea"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Sistema de Detecção de Rachaduras | Desenvolvido com YOLOv11
+  </div>
+
+  <script>
+    let images = [];
+    let currentIndex = 0;
+    let videoInterval;
+    let videoStreamActive = false;
+
+    const imgInput = document.getElementById("imgInput");
+    const imageBox = document.getElementById("imageBox");
+    const imageDisplay = document.getElementById("imageDisplay");
+    const videoBox = document.getElementById("videoBox");
+    const videoStream = document.getElementById("videoStream");
+    const viewer = document.getElementById("viewer");
+    const endButton = document.getElementById("endButton");
+    const alertArea = document.getElementById("alertArea");
+    const currentImageNumber = document.getElementById("currentImageNumber");
+    const totalImages = document.getElementById("totalImages");
+
+    imgInput.addEventListener("change", function () {
+      images = Array.from(imgInput.files);
+      if (images.length === 0) return;
+
+      // Encerra a câmera se estiver ativa
+      if (videoStreamActive) {
+        endCamera();
+      }
+
+      viewer.style.display = "block";
+      imageBox.style.display = "block";
+      videoBox.style.display = "none";
+      endButton.style.display = "inline-block";
+      totalImages.textContent = images.length;
+
+      showImage(0);
+    });
+
+    function showImage(index) {
+      if (images.length === 0) return;
+      
+      currentIndex = index;
+      currentImageNumber.textContent = currentIndex + 1;
+      
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base64Image = e.target.result;
+        detectRachadura(base64Image, images[index].name);
+      };
+      reader.readAsDataURL(images[index]);
+    }
+
+    function nextImage() {
+      if (currentIndex < images.length - 1) {
+        showImage(currentIndex + 1);
+      }
+    }
+
+    function prevImage() {
+      if (currentIndex > 0) {
+        showImage(currentIndex - 1);
+      }
+    }
+
+    function startCamera() {
+      // Encerra a visualização de imagens se estiver ativa
+      if (imageBox.style.display === "block") {
+        imageBox.style.display = "none";
+      }
+      
+      viewer.style.display = "block";
+      videoBox.style.display = "block";
+      endButton.style.display = "inline-block";
+      
+      // Inicia o stream somente quando o usuário clica em Abrir Câmera
+      videoStream.src = "/video";
+      videoStreamActive = true;
+      
+      // Iniciar o intervalo de detecção
+      videoInterval = setInterval(detectFromVideo, 5000);
+    }
+
+    function endCamera() {
+      // Limpa o intervalo de detecção
+      clearInterval(videoInterval);
+      
+      // Remove a fonte do stream
+      videoStream.src = "";
+      videoStreamActive = false;
+    }
+
+    function endView() {
+      viewer.style.display = "none";
+      videoBox.style.display = "none";
+      imageBox.style.display = "none";
+      endButton.style.display = "none";
+      
+      // Garante que a câmera seja encerrada
+      if (videoStreamActive) {
+        endCamera();
+      }
+    }
+
+    function detectRachadura(base64, filename) {
+      fetch('/detect_image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64 })
+      })
+      .then(response => response.json())
+      .then(data => {
+        imageDisplay.src = 'data:image/jpeg;base64,' + data.annotated_image;
+        if (data.crack_detected) {
+          const p = document.createElement("p");
+          p.textContent = "Rachadura encontrada na imagem '" + filename + "'";
+          alertArea.prepend(p); // Adiciona no topo para que os novos alertas fiquem visíveis primeiro
+        }
+      })
+      .catch(error => {
+        console.error("Erro ao detectar rachaduras:", error);
+      });
+    }
+
+    function detectFromVideo() {
+      if (!videoStreamActive) return;
+      
+      fetch('/detect_time')
+        .then(response => response.json())
+        .then(data => {
+          if (data.crack_detected) {
+            const p = document.createElement("p");
+            p.textContent = "Rachadura encontrada na filmagem em " + data.timestamp;
+            alertArea.prepend(p);
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao detectar rachaduras do vídeo:", error);
+        });
+    }
+  </script>
+</body>
+</html>
