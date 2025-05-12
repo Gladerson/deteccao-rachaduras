@@ -5,7 +5,7 @@ home/user/Documentos/PPgTI/ComputerVision/Projeto/
 ├── Python_virtual_environment_of_the_PPgTI_computer_vision_project/
 ├── detectar_rachaduras.py                          ← script principal de inferência
 ├── /datasets/
-│   └── merged_crack_det.v1i.yolov11/
+│   └── merged_crack_det.v1i.yolov11/               ← https://universe.roboflow.com/crack-detection-dataset/merged_crack_det/dataset/1
 │       ├── data.yaml
 │       ├── train/
 │       ├── valid/
