@@ -6,7 +6,7 @@ import base64
 from datetime import datetime
 
 app = Flask(__name__)
-model = YOLO("/home/gladersonjessika/Documentos/PPgTI/ComputerVision/Projeto/datasets/merged_crack_det.v1i.yolov11/detect_cracks/yolo11n_cracks/weights/last.pt")
+model = YOLO("/home/user/Documentos/PPgTI/ComputerVision/Projeto/datasets/merged_crack_det.v1i.yolov11/detect_cracks/yolo11n_cracks/weights/last.pt")
 
 @app.route('/')
 def index():
