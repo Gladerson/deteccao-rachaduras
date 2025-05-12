@@ -8,13 +8,13 @@ import seaborn as sns               # Biblioteca para visualização de dados ba
 # =========================================
 # 1. Criar pasta de saída
 # =========================================
-output_dir = '/home/gladersonjessika/Documentos/PPgTI/ComputerVision/Projeto/plot'
+output_dir = '/home/user/Documentos/PPgTI/ComputerVision/Projeto/plot'
 os.makedirs(output_dir, exist_ok=True)
 
 # =========================================
 # 2. Configurar caminhos do dataset e modelo
 # =========================================
-dataset_path = '/home/gladersonjessika/Documentos/PPgTI/ComputerVision/Projeto/datasets/merged_crack_det.v1i.yolov11'
+dataset_path = '/home/user/Documentos/PPgTI/ComputerVision/Projeto/datasets/merged_crack_det.v1i.yolov11'
 data_yaml_path = f'{dataset_path}/data.yaml'
 
 # =========================================
@@ -92,4 +92,3 @@ axs[1].axis('off')
 plt.tight_layout()
 plt.savefig(f"{output_dir}/detecao_rachadura.png")
 plt.show()
-
